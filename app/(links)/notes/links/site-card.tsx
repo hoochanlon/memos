@@ -678,6 +678,7 @@ async function fetchDataFromXxapi(url: string): Promise<WebsiteData> {
 async function fetchDataFromJxcxin(url: string): Promise<WebsiteData> {
   try {
     const apiUrl = `https://apis.jxcxin.cn/api/title?url=${encodeURIComponent(url)}`;
+    console.log(`[Jxcxin] 开始请求: ${apiUrl}`);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
     
@@ -693,12 +694,26 @@ async function fetchDataFromJxcxin(url: string): Promise<WebsiteData> {
     
     clearTimeout(timeoutId);
     
+    console.log(`[Jxcxin] ${url} 响应状态:`, {
+      ok: response.ok,
+      status: response.status,
+      statusText: response.statusText,
+      contentType: response.headers.get('content-type'),
+    });
+    
     // 检查 HTTP 状态码
     if (!response.ok) {
       if (response.status === 429) {
         logger.warn(`[Jxcxin] ${url} 返回 429 速率限制错误`);
       } else {
         logger.warn(`[Jxcxin] ${url} 返回错误状态码: ${response.status}`);
+      }
+      // 即使状态码不是 200，也尝试读取响应体，可能有错误信息
+      try {
+        const errorText = await response.text();
+        console.warn(`[Jxcxin] ${url} 错误响应体:`, errorText.substring(0, 200));
+      } catch (e) {
+        // 忽略读取错误
       }
       return {};
     }
@@ -713,21 +728,36 @@ async function fetchDataFromJxcxin(url: string): Promise<WebsiteData> {
     let data;
     try {
       data = await response.json();
+      console.log(`[Jxcxin] ${url} 原始响应数据:`, data);
     } catch (jsonError) {
       logger.error(`[Jxcxin] ${url} JSON 解析失败:`, jsonError);
       return {};
     }
     
+    // 检查响应结构
     if (data.code === 200 && data.data) {
-      return {
+      const result = {
         title: data.data.title,
         description: data.data.description,
       };
+      console.log(`[Jxcxin] ${url} 解析后的数据:`, result);
+      return result;
+    } else {
+      console.warn(`[Jxcxin] ${url} 响应结构不符合预期:`, {
+        code: data.code,
+        hasData: !!data.data,
+        data: data,
+      });
     }
     
     return {};
   } catch (error: any) {
     const errorMessage = error?.message || String(error);
+    console.error(`[Jxcxin] ${url} API 调用失败:`, {
+      error: errorMessage,
+      name: error?.name,
+      stack: error?.stack,
+    });
     if (errorMessage.includes('ERR_BLOCKED_BY_CLIENT') || 
         errorMessage.includes('Failed to fetch') ||
         errorMessage.includes('network') ||
@@ -1067,9 +1097,17 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData> {
       try {
         console.log(`[fetchWebsiteData] ${url} 调用 Jxcxin API...`);
         jxcxinData = await fetchDataFromJxcxin(url);
+        console.log(`[fetchWebsiteData] ${url} Jxcxin API 返回的原始数据:`, jxcxinData);
         const hasData = !!(jxcxinData.title || jxcxinData.description);
         apiResults.push({ api: 'Jxcxin', success: true, hasData, timestamp: Date.now() });
-        console.log(`[fetchWebsiteData] ${url} Jxcxin API 结果:`, { hasData, data: jxcxinData });
+        console.log(`[fetchWebsiteData] ${url} Jxcxin API 结果:`, { 
+          hasData, 
+          hasTitle: !!jxcxinData.title,
+          hasDescription: !!jxcxinData.description,
+          title: jxcxinData.title,
+          description: jxcxinData.description,
+          data: jxcxinData 
+        });
     
     // 如果 jxcxin 有数据，验证有效性后再使用
     if (hasData) {
