@@ -1,0 +1,5 @@
+/* 方法A：针对所有KaTeX上标 */
+.mord .msupsub .mtight {
+    font-size: 90% !important;
+}
+  

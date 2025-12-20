@@ -1,0 +1,68 @@
+---
+title: "中文 URL 访问测试"
+description: 验证静态导出后中文路径配合目录解码脚本的可访问性
+tags: ['测试']
+publishedAt: 2025-12-12
+---
+
+> 目的：这篇文章用于验证「静态导出 + 目录解码」方案在中文 URL 场景下是否正常可访问。构建后目录会先被 URL 编码，再由 decode-paths.js 还原为中文目录。
+
+## 访问路径说明
+
+- 预期线上访问地址（部署到 `/memos`）：`/memos/notes/essay/中文url访问测试/`
+- 构建时 Next 导出会生成 `%E4%B8%AD%E6%96%87url%E8%AE%BF%E9%97%AE%E6%B5%8B%E8%AF%95/` 目录
+- `postbuild` 自动运行 `scripts/decode-paths.js`，将上述目录重命名为中文目录，静态托管时即可命中
+
+## 代码
+
+
+```js title="scripts\decode-paths.js"
+const { readdirSync, renameSync, statSync } = require('fs');
+const { join } = require('path');
+
+// 遍历 out 目录，将编码过的路径解码为可读目录名（支持中文）
+const root = join(process.cwd(), 'out');
+
+function walk(dir) {
+  for (const name of readdirSync(dir)) {
+    const full = join(dir, name);
+    if (!statSync(full).isDirectory()) continue;
+
+    const decoded = decodeURIComponent(name);
+    const target = decoded === name ? full : join(dir, decoded);
+
+    // 先重命名，再递归
+    if (decoded !== name) {
+      renameSync(full, target);
+    }
+
+    walk(target);
+  }
+}
+
+walk(root);
+console.log('中文目录解码完成');
+```
+
+
+```json title="package.json"
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "start": "next start",
+    "postbuild": "node scripts/decode-paths.js", //[!code++]
+    "types:check": "fumadocs-mdx && tsc --noEmit",
+    "postinstall": "fumadocs-mdx"
+  },
+```
+
+## 检查清单
+
+* [x] 本地 `npm run build`（会自动执行 `postbuild`）  
+* [x] 查看 `out/notes/essay/中文url访问测试/` 是否存在 `index.html`  
+* [x] 部署 `out` 到 `/memos`，访问中文 URL，确认不再 404  
+
+## 额外说明
+
+<dd>本例故意保留中文文件名与中文 URL，用于验证解码脚本。</dd>
+<dd>可在 frontmatter 添加 `slug: essay/zh-url-test`，那就无需依赖解码脚本。</dd>

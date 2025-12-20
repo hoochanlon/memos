@@ -1,0 +1,20 @@
+/* TOC 区域字号提升 */
+
+#toc-title {
+  font-size: 0 !important; /* 隐藏原文本 */
+}
+#toc-title::after {
+  content: '目录';
+  font-size: 15px;
+}
+
+#nd-toc,
+#nd-toc * {
+  font-size: 15px;
+}
+
+#toc-title svg {
+  width: 16px;
+  height: 16px;
+}
+

@@ -1,0 +1,189 @@
+:root {
+  --font-noto-serif-sc: 'OPPO Sans 4.0', sans-serif;
+  --font-quicksand: 'Quicksand', 'Inter', 'Helvetica', 'Arial', sans-serif;
+}
+
+/* 全局中文字体设置 */
+body {
+  font-family: var(--font-noto-serif-sc);
+}
+
+h1[class="text-3xl md:text-5xl font-bold tracking-tight text-gray-400 dark:text-gray-400"] {
+  font-family: var(--font-quicksand);
+  font-size: 50px;
+}
+
+/* 使用 CSS 变量 */
+h1, h2, h3, h4, h5, h6, p, span, div {
+  font-family: var(--font-noto-serif-sc);
+}
+
+/* √2 比例 - 更适合中文 */
+:root {
+  --base-size: 18px;
+  --ratio: 1.414; /* √2 比例，传统排版常用 */
+}
+
+/* 标题字体大小 */
+h1 {
+  font-size: calc(var(--base-size) * var(--ratio) * var(--ratio));
+  /* 约36px */
+}
+
+h2 {
+  font-size: calc(var(--base-size) * var(--ratio));
+  /* 约25px */
+}
+
+h3 {
+  font-size: calc(var(--base-size) * 1.125);
+  /* 约20px */
+}
+
+h4 {
+  font-size: calc(var(--base-size) * 1);
+  /* 18px */
+}
+
+/* 段落样式 */
+li,p, span,code,pre,dd,dt {
+  font-size: var(--base-size);
+  line-height: 1.8;
+}
+
+/* 列表缩进与层级间距 */
+.prose ul,
+.prose ol {
+  padding-inline-start: 1.5rem;
+  margin-inline-start: 0.75rem;
+}
+
+.prose ul {
+  list-style-type: disc;
+}
+
+.prose ul ul {
+  list-style-type: circle;
+}
+
+.prose ul ul ul {
+  list-style-type: square;
+}
+
+.prose ul ul,
+.prose ol ol,
+.prose ul ol,
+.prose ol ul {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+/* 普通链接基础样式 - 完全简化，让原有样式系统工作 */
+a {
+  /* 只设置字体大小，其他样式由原有类名控制 */
+  font-size: var(--base-size);
+  line-height: 1.8;
+  /* 不要设置 text-decoration 和 color，让原有类名控制 */
+}
+
+/* 重要：让标题内的链接继承标题的字体大小和字体族 */
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+  font-size: inherit;      /* 继承父标题的大小 */
+  font-family: inherit;    /* 继承父标题的字体 */
+  line-height: inherit;    /* 继承父标题的行高 */
+  text-decoration-color: rgba(0, 0, 0, 0.3);
+}
+
+/* 只在正文中应用标题链接hover效果 */
+.prose h1 a:hover, 
+.prose h2 a:hover, 
+.prose h3 a:hover, 
+.prose h4 a:hover, 
+.prose h5 a:hover, 
+.prose h6 a:hover {
+  text-decoration-color: currentColor;
+}
+
+/* 确保特殊链接样式不受影响 */
+a.inline-flex[href="/"] {
+  font-family: var(--font-quicksand), 'Quicksand', 'Inter', 'Helvetica', sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.04em;
+}
+
+.site-footer a {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: inherit;
+}
+
+
+/* 按钮样式 */
+button[aria-controls^="radix-"] {
+  font-size: var(--base-size);
+  line-height: 1.8;
+}
+
+/* 目录特定样式 - 修正 */
+#nd-toc #toc-title,
+#nd-toc a {
+  font-size: 16px;
+  line-height: 1.8;
+  /* 不设置颜色，让原有类名控制 */
+  font-family: var(--font-noto-serif-sc);
+}
+
+.site-footer * {
+  font-family: var(--font-quicksand) !important;
+}
+
+
+/* 目录 */
+#toc-title:after {
+  content: "目录";
+  font-size: 18px;
+}
+/* 精确匹配整个class字符串，导航栏标题 */
+a[class="inline-flex items-center gap-2.5 font-semibold"] {
+  font-family: 'quicksand';
+  font-size: 20px;
+}
+
+
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  :root {
+    --base-size: 16px;
+  }
+  
+  h1 {
+    font-size: calc(var(--base-size) * var(--ratio) * 1.2);
+  }
+  
+  h2 {
+    font-size: calc(var(--base-size) * var(--ratio));
+  }
+  
+  h3 {
+    font-size: calc(var(--base-size) * 1.125);
+  }
+}
+
+/* 暗色模式支持 - 让原有系统处理 */
+@media (prefers-color-scheme: dark) {
+  /* 不设置具体颜色，原有系统已有处理 */
+  .text-fd-muted-foreground {
+    color: rgba(156, 163, 175, 0.8);
+  }
+  
+  .text-fd-accent-foreground {
+    color: rgba(209, 213, 219, 0.9);
+  }
+  
+  .text-fd-primary {
+    color: rgba(59, 130, 246, 0.9);
+  }
+}
+
+

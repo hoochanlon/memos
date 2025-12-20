@@ -1,0 +1,147 @@
+media:
+  - name: images
+    label: 资源
+    input: public
+    output: /
+    categories: [ image ]
+    path: /
+  - name: icons
+    label: 图标
+    input: public/icons
+    output: /icons
+    categories: [ image ]
+    extensions: [ svg, png, jpg, jpeg, webp ]
+    path: /icons
+
+content:
+  - name: notes
+    label: 笔记
+    type: collection
+    path: content/notes
+    format: yaml-frontmatter
+    subfolders: true
+    filename: "{year}-{month}-{day}-{primary}.mdx"
+    exclude:
+      - index.mdx
+      - README.md
+    view:
+      fields:
+        - title
+        - description
+        - publishedAt
+        - tags
+        - password
+      primary: title
+      sort:
+        - publishedAt
+        - title
+      defaultSort:
+        field: publishedAt
+        order: desc
+      search:
+        - title
+        - description
+        - tags
+    fields:
+      # 标题 - 必需字段
+      - name: title
+        label: 标题
+        type: string
+        required: true
+        description: 文章标题
+
+      # 描述
+      - name: description
+        label: 描述
+        type: text
+        description: 文章简短描述，用于 SEO 和预览
+
+      # 发布时间
+      - name: publishedAt
+        label: 发布时间
+        type: date
+        options:
+          time: false
+          format: "yyyy-MM-dd"
+        description: 文章发布日期
+
+      # 最后更新时间
+      - name: lastUpdated
+        label: 最后更新
+        type: date
+        options:
+          time: false
+          format: "yyyy-MM-dd"
+        description: 文章最后更新时间
+
+      # 标签 - 支持多个标签
+      - name: tags
+        label: 标签
+        type: string
+        list: true
+        description: 文章标签，可添加多个
+
+      # Slug - 自定义 URL 路径
+      - name: slug
+        label: 自定义路径
+        type: string
+        description: 自定义文章 URL 路径（可选，留空则使用默认路径）
+        pattern:
+          regex: "^[a-zA-Z0-9/_-]+$"
+          message: "路径只能包含字母、数字、斜杠、下划线和连字符"
+
+      # 目录显示
+      - name: toc
+        label: 显示目录
+        type: boolean
+        default: true
+        description: 是否在页面显示目录
+
+      # 页脚显示
+      - name: footer
+        label: 显示页脚
+        type: boolean
+        default: true
+        description: 是否在页面显示页脚导航
+
+      # GitHub 编辑按钮
+      - name: editOnGitHub
+        label: 显示 GitHub 编辑按钮
+        type: boolean
+        default: true
+        description: 是否显示"在 GitHub 上编辑"按钮
+
+      # 密码保护
+      - name: password
+        label: 密码
+        type: string
+        description: 文章密码（可选，设置后文章将被加密保护）
+        pattern:
+          regex: "^[a-zA-Z0-9!@#$%^&*()_+-=]{1,50}$"
+          message: "密码只能包含字母、数字和常用特殊字符，长度不超过 50 个字符"
+
+      # 密码提示
+      - name: passwordHint
+        label: 密码提示
+        type: text
+        description: 密码提示文字，显示在密码输入界面
+
+      # 正文内容
+      - name: body
+        label: 正文内容
+        type: rich-text
+        description: 文章正文内容（Markdown 格式）
+
+  # 网站导航配置
+  - name: site-links
+    label: 网站导航
+    type: file
+    path: app/(links)/notes/links/site-links.ts
+    fields:
+      - name: body
+        label: TypeScript 代码，编辑网站导航数据。
+        type: setting
+
+settings:
+  content:
+    merge: true
