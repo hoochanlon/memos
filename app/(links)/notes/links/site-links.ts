@@ -323,9 +323,8 @@ export const siteLinks: SiteCategory[] = [
         url: 'https://xxapi.cn/api-market',
       }),
       createSite({
-        name: '夏柔 API',
-        url: 'https://api.aa1.cn',
-        description: '分享的API永不收费',
+        name: 'UApiPro',
+        url: 'https://uapis.cn',
       }),
       createSite({
         name: 'API Store',
@@ -352,6 +351,7 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: 'myscript',
         url: 'https://webdemo.myscript.com/views/math/index.html#',
+        description: '数学公式识别和输入工具，支持手写、扫描和图片输入。',
       }),
       createSite({
         name: 'labex',
