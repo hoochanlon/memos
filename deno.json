@@ -1,5 +1,0 @@
-{
-  "tasks": {
-    "build": "next build"
-  }
-}
