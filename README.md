@@ -1,5 +1,7 @@
 # Memos
 
+## 工具介绍
+
 基于 fumadocs 构建的静态个人网页备忘录。
 
 * 增加行号适配
@@ -21,5 +23,21 @@
     * 这会在 `pnpm run build` 完成后自动运行 scripts/decode-paths.js。
 
 下载地址：https://github.com/hoochanlon/memos/releases
+
+## 测试脚本
+
+项目包含一个API测试脚本 `test-local-apis.js`，用于测试本地环境下网站元数据提取API的调用情况。
+
+1. **运行测试脚本**
+   ```bash
+   node test-local-apis.js
+   ```
+
+2. **查看测试结果**
+   脚本会输出每个API的测试结果，包括：
+   - HTTP状态码
+   - 是否成功获取description字段
+   - description内容的前50个字符（如果有）
+
 
 ![](https://cdn.jsdelivr.net/gh/hoochanlon/picx-images-hosting@master/uploads/2025/PixPin_2025-12-10_20-39-13.webp)
