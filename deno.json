@@ -1,0 +1,5 @@
+{
+  "tasks": {
+    "build": "deno task --v8-flags=\"--max-old-space-size=4096\" compile"
+  }
+}
