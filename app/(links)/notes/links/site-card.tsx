@@ -924,12 +924,18 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData> {
         apiResults.push({ api: 'Ahfi', success: true, hasData, timestamp: Date.now() });
         console.log(`[fetchWebsiteData] ${url} Ahfi API 结果:`, { hasData, data: ahfiData });
       
-      // 如果 ahfi 有数据，使用 ahfi 的数据
+      // 如果 ahfi 有数据，验证有效性后再使用
       if (hasData) {
-        logger.log(`[fetchWebsiteData] ${url} 使用 Ahfi 数据`);
-        // 写入缓存
-        setCachedWebsiteData(url, ahfiData);
-        return ahfiData;
+        // 验证数据有效性
+        if (isValidWebsiteData(ahfiData, url)) {
+          logger.log(`[fetchWebsiteData] ${url} 使用 Ahfi 数据`);
+          // 写入缓存
+          setCachedWebsiteData(url, ahfiData);
+          return ahfiData;
+        } else {
+          console.warn(`[fetchWebsiteData] ${url} Ahfi 返回的数据无效，继续尝试其他 API:`, ahfiData);
+          logger.warn(`[fetchWebsiteData] ${url} Ahfi 数据无效，继续尝试其他 API`);
+        }
       }
       } catch (error: any) {
         const errorMsg = error?.message || String(error);
@@ -951,12 +957,18 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData> {
         apiResults.push({ api: 'Microlink', success: true, hasData, timestamp: Date.now() });
         console.log(`[fetchWebsiteData] ${url} Microlink API 结果:`, { hasData, data: microlinkData });
         
-        // 如果 microlink 返回了 title 或 description，直接使用
+        // 如果 microlink 返回了 title 或 description，验证有效性后再使用
         if (hasData) {
-          logger.log(`[fetchWebsiteData] ${url} 使用 Microlink 数据`);
-          // 写入缓存
-          setCachedWebsiteData(url, microlinkData);
-          return microlinkData;
+          // 验证数据有效性
+          if (isValidWebsiteData(microlinkData, url)) {
+            logger.log(`[fetchWebsiteData] ${url} 使用 Microlink 数据`);
+            // 写入缓存
+            setCachedWebsiteData(url, microlinkData);
+            return microlinkData;
+          } else {
+            console.warn(`[fetchWebsiteData] ${url} Microlink 返回的数据无效，继续尝试其他 API:`, microlinkData);
+            logger.warn(`[fetchWebsiteData] ${url} Microlink 数据无效，继续尝试其他 API`);
+          }
         }
       } catch (error: any) {
         const errorMsg = error?.message || String(error);
@@ -984,12 +996,18 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData> {
         apiResults.push({ api: 'Microlink', success: true, hasData, timestamp: Date.now() });
         console.log(`[fetchWebsiteData] ${url} Microlink API 结果:`, { hasData, data: microlinkData });
         
-        // 如果 microlink 返回了 title 或 description，直接使用
+        // 如果 microlink 返回了 title 或 description，验证有效性后再使用
         if (hasData) {
-          logger.log(`[fetchWebsiteData] ${url} 使用 Microlink 数据`);
-          // 写入缓存
-          setCachedWebsiteData(url, microlinkData);
-          return microlinkData;
+          // 验证数据有效性
+          if (isValidWebsiteData(microlinkData, url)) {
+            logger.log(`[fetchWebsiteData] ${url} 使用 Microlink 数据`);
+            // 写入缓存
+            setCachedWebsiteData(url, microlinkData);
+            return microlinkData;
+          } else {
+            console.warn(`[fetchWebsiteData] ${url} Microlink 返回的数据无效，继续尝试其他 API:`, microlinkData);
+            logger.warn(`[fetchWebsiteData] ${url} Microlink 数据无效，继续尝试其他 API`);
+          }
         }
       } catch (error: any) {
         const errorMsg = error?.message || String(error);
@@ -1021,12 +1039,18 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData> {
         apiResults.push({ api: 'Xxapi', success: true, hasData, timestamp: Date.now() });
         console.log(`[fetchWebsiteData] ${url} Xxapi API 结果:`, { hasData, data: xxapiData });
     
-    // 如果 xxapi 有数据，使用 xxapi 的数据
+    // 如果 xxapi 有数据，验证有效性后再使用
     if (hasData) {
-      logger.log(`[fetchWebsiteData] ${url} 使用 Xxapi 数据`);
-      // 写入缓存
-      setCachedWebsiteData(url, xxapiData);
-      return xxapiData;
+      // 验证数据有效性
+      if (isValidWebsiteData(xxapiData, url)) {
+        logger.log(`[fetchWebsiteData] ${url} 使用 Xxapi 数据`);
+        // 写入缓存
+        setCachedWebsiteData(url, xxapiData);
+        return xxapiData;
+      } else {
+        console.warn(`[fetchWebsiteData] ${url} Xxapi 返回的数据无效，继续尝试其他 API:`, xxapiData);
+        logger.warn(`[fetchWebsiteData] ${url} Xxapi 数据无效，继续尝试其他 API`);
+      }
     }
       } catch (error: any) {
         const errorMsg = error?.message || String(error);
@@ -1047,12 +1071,18 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData> {
         apiResults.push({ api: 'Jxcxin', success: true, hasData, timestamp: Date.now() });
         console.log(`[fetchWebsiteData] ${url} Jxcxin API 结果:`, { hasData, data: jxcxinData });
     
-    // 如果 jxcxin 有数据，使用 jxcxin 的数据
+    // 如果 jxcxin 有数据，验证有效性后再使用
     if (hasData) {
-      logger.log(`[fetchWebsiteData] ${url} 使用 Jxcxin 数据`);
-      // 写入缓存
-      setCachedWebsiteData(url, jxcxinData);
-      return jxcxinData;
+      // 验证数据有效性
+      if (isValidWebsiteData(jxcxinData, url)) {
+        logger.log(`[fetchWebsiteData] ${url} 使用 Jxcxin 数据`);
+        // 写入缓存
+        setCachedWebsiteData(url, jxcxinData);
+        return jxcxinData;
+      } else {
+        console.warn(`[fetchWebsiteData] ${url} Jxcxin 返回的数据无效，继续尝试其他 API:`, jxcxinData);
+        logger.warn(`[fetchWebsiteData] ${url} Jxcxin 数据无效，继续尝试其他 API`);
+      }
     }
       } catch (error: any) {
         const errorMsg = error?.message || String(error);
@@ -1073,12 +1103,18 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData> {
         apiResults.push({ api: 'Uapis', success: true, hasData, timestamp: Date.now() });
         console.log(`[fetchWebsiteData] ${url} Uapis API 结果:`, { hasData, data: uapisData });
     
-    // 如果 Uapis 有数据，使用 Uapis 的数据
+    // 如果 Uapis 有数据，验证有效性后再使用
     if (hasData) {
-      logger.log(`[fetchWebsiteData] ${url} 使用 Uapis 数据`);
-      // 写入缓存
-      setCachedWebsiteData(url, uapisData);
-      return uapisData;
+      // 验证数据有效性
+      if (isValidWebsiteData(uapisData, url)) {
+        logger.log(`[fetchWebsiteData] ${url} 使用 Uapis 数据`);
+        // 写入缓存
+        setCachedWebsiteData(url, uapisData);
+        return uapisData;
+      } else {
+        console.warn(`[fetchWebsiteData] ${url} Uapis 返回的数据无效，继续尝试其他 API:`, uapisData);
+        logger.warn(`[fetchWebsiteData] ${url} Uapis 数据无效，继续尝试其他 API`);
+      }
     }
       } catch (error: any) {
         const errorMsg = error?.message || String(error);
