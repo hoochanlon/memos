@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ExternalLink } from 'lucide-react';
 import { SiteIcon } from './site-icon';
 import type { Site } from './site-links';
+import { extractDomain } from './site-utils';
 
 interface SiteCardProps {
   site: Site;
@@ -661,9 +662,16 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData> {
     return jxcxinData;
   }
   
-  logger.log(`[fetchWebsiteData] ${url} 所有方案都失败`);
-  // 四个 API 都失败，返回空对象（不缓存失败的结果）
-  return {};
+  logger.log(`[fetchWebsiteData] ${url} 所有方案都失败，生成默认描述`);
+  
+  // 四个 API 都失败，生成默认描述
+  const defaultDescription = `访问 ${extractDomain(url)} 网站`;
+  const defaultData = { description: defaultDescription };
+  
+  // 写入缓存，避免下次重复请求
+  setCachedWebsiteData(url, defaultData);
+  
+  return defaultData;
 }
 
 // 检查 name 是否需要自动获取（undefined 或空字符串）
@@ -756,7 +764,12 @@ export function SiteCard({ site }: SiteCardProps) {
                   </p>
                 );
               }
-              return null;
+              // 最后的保险：如果没有描述，显示一个友好的默认占位符
+              return (
+                <p className="text-sm text-fd-muted-foreground line-clamp-2 italic">
+                  访问 {extractDomain(site.url)} 网站
+                </p>
+              );
             })()}
           </div>
         </div>

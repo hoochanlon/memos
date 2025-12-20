@@ -54,6 +54,7 @@ export const siteLinks: SiteCategory[] = [
         url: 'https://www.itdog.cn/',
       }),
       createSite({
+        name: 'Pinterest',
         url: 'https://www.pinterest.com',
       }),
       createSite({

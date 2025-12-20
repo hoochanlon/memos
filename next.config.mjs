@@ -50,9 +50,10 @@ const config = {
     workerThreads: false,
     // 禁用不必要的优化
     optimizeCss: false,
-    // 禁用服务器组件（静态导出不需要）
-    serverComponentsExternalPackages: [],
   },
+  // 禁用服务器组件（静态导出不需要）
+  serverExternalPackages: [],
+
   // 生产环境优化：禁用 source map 以减少内存使用
   productionBrowserSourceMaps: false,
   // 减少构建时的内存使用：限制并发
