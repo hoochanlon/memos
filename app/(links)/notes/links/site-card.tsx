@@ -401,6 +401,12 @@ async function fetchDataFromMicrolink(url: string): Promise<WebsiteData> {
     
     const response = await fetch(apiUrl, {
       signal: controller.signal,
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (compatible; SiteCard/1.0)',
+      },
+      mode: 'cors',
+      credentials: 'omit',
     });
     
     clearTimeout(timeoutId);
@@ -480,6 +486,12 @@ async function fetchDataFromAhfi(url: string): Promise<WebsiteData> {
     
     const response = await fetch(apiUrl, {
       signal: controller.signal,
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (compatible; SiteCard/1.0)',
+      },
+      mode: 'cors',
+      credentials: 'omit',
     });
     
     clearTimeout(timeoutId);
@@ -544,6 +556,12 @@ async function fetchDataFromXxapi(url: string): Promise<WebsiteData> {
     
     const response = await fetch(apiUrl, {
       signal: controller.signal,
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (compatible; SiteCard/1.0)',
+      },
+      mode: 'cors',
+      credentials: 'omit',
     });
     
     clearTimeout(timeoutId);
@@ -607,6 +625,12 @@ async function fetchDataFromJxcxin(url: string): Promise<WebsiteData> {
     
     const response = await fetch(apiUrl, {
       signal: controller.signal,
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (compatible; SiteCard/1.0)',
+      },
+      mode: 'cors',
+      credentials: 'omit',
     });
     
     clearTimeout(timeoutId);
@@ -670,6 +694,12 @@ async function fetchDataFromUapis(url: string): Promise<WebsiteData> {
     
     const response = await fetch(apiUrl, {
       signal: controller.signal,
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (compatible; SiteCard/1.0)',
+      },
+      mode: 'cors',
+      credentials: 'omit',
     });
     
     clearTimeout(timeoutId);
@@ -763,6 +793,9 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData> {
   // 缓存未命中或已过期，从 API 获取
   logger.log(`[fetchWebsiteData] ${url} 缓存未命中，从 API 获取`);
   
+  // 记录 API 调用结果，用于调试
+  const apiResults: Array<{api: string; success: boolean; hasData: boolean; error?: string}> = [];
+  
   const isChinese = isChineseWebsite(url);
   
   // 根据域名类型选择不同的 API 调用顺序
@@ -770,52 +803,81 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData> {
     logger.log(`[fetchWebsiteData] ${url} 是国内网站，优先使用 Ahfi API`);
     
     // 方案一：国内网站优先使用 Ahfi API
-    const ahfiData = await fetchDataFromAhfi(url);
-    
-    // 如果 ahfi 有数据，使用 ahfi 的数据
-    if (ahfiData.title || ahfiData.description) {
-      logger.log(`[fetchWebsiteData] ${url} 使用 Ahfi 数据`);
-      // 写入缓存
-      setCachedWebsiteData(url, ahfiData);
-      return ahfiData;
+    let ahfiData: WebsiteData;
+    try {
+      ahfiData = await fetchDataFromAhfi(url);
+      const hasData = !!(ahfiData.title || ahfiData.description);
+      apiResults.push({ api: 'Ahfi', success: true, hasData });
+      
+      // 如果 ahfi 有数据，使用 ahfi 的数据
+      if (hasData) {
+        logger.log(`[fetchWebsiteData] ${url} 使用 Ahfi 数据`);
+        // 写入缓存
+        setCachedWebsiteData(url, ahfiData);
+        return ahfiData;
+      }
+    } catch (error: any) {
+      apiResults.push({ api: 'Ahfi', success: false, hasData: false, error: error?.message });
+      logger.error(`[fetchWebsiteData] ${url} Ahfi API 调用异常:`, error);
+      ahfiData = {};
     }
     
     logger.log(`[fetchWebsiteData] ${url} Ahfi 失败，尝试 Microlink`);
     
     // 方案二：Ahfi 失败后尝试 Microlink
     if (isMicrolinkAvailable()) {
-      const microlinkData = await queueMicrolinkRequest(() => fetchDataFromMicrolink(url));
-      
-      // 如果 microlink 返回了 title 或 description，直接使用
-      if (microlinkData.title || microlinkData.description) {
-        logger.log(`[fetchWebsiteData] ${url} 使用 Microlink 数据`);
-        // 写入缓存
-        setCachedWebsiteData(url, microlinkData);
-        return microlinkData;
+      let microlinkData: WebsiteData;
+      try {
+        microlinkData = await queueMicrolinkRequest(() => fetchDataFromMicrolink(url));
+        const hasData = !!(microlinkData.title || microlinkData.description);
+        apiResults.push({ api: 'Microlink', success: true, hasData });
+        
+        // 如果 microlink 返回了 title 或 description，直接使用
+        if (hasData) {
+          logger.log(`[fetchWebsiteData] ${url} 使用 Microlink 数据`);
+          // 写入缓存
+          setCachedWebsiteData(url, microlinkData);
+          return microlinkData;
+        }
+      } catch (error: any) {
+        apiResults.push({ api: 'Microlink', success: false, hasData: false, error: error?.message });
+        logger.error(`[fetchWebsiteData] ${url} Microlink API 调用异常:`, error);
+        microlinkData = {};
       }
       
       logger.log(`[fetchWebsiteData] ${url} Microlink 失败，尝试方案三 (Xxapi)`);
     } else {
       logger.warn(`[fetchWebsiteData] ${url} Microlink 处于熔断冷却期，跳过直接尝试 Xxapi`);
+      apiResults.push({ api: 'Microlink', success: false, hasData: false, error: '熔断冷却期' });
     }
   } else {
     logger.log(`[fetchWebsiteData] ${url} 是国外网站，优先使用 Microlink API`);
     
     // 方案一：国外网站优先使用 microlink.io（使用队列确保同一时间只有一个请求）
     if (isMicrolinkAvailable()) {
-      const microlinkData = await queueMicrolinkRequest(() => fetchDataFromMicrolink(url));
-      
-      // 如果 microlink 返回了 title 或 description，直接使用
-      if (microlinkData.title || microlinkData.description) {
-        logger.log(`[fetchWebsiteData] ${url} 使用 Microlink 数据`);
-        // 写入缓存
-        setCachedWebsiteData(url, microlinkData);
-        return microlinkData;
+      let microlinkData: WebsiteData;
+      try {
+        microlinkData = await queueMicrolinkRequest(() => fetchDataFromMicrolink(url));
+        const hasData = !!(microlinkData.title || microlinkData.description);
+        apiResults.push({ api: 'Microlink', success: true, hasData });
+        
+        // 如果 microlink 返回了 title 或 description，直接使用
+        if (hasData) {
+          logger.log(`[fetchWebsiteData] ${url} 使用 Microlink 数据`);
+          // 写入缓存
+          setCachedWebsiteData(url, microlinkData);
+          return microlinkData;
+        }
+      } catch (error: any) {
+        apiResults.push({ api: 'Microlink', success: false, hasData: false, error: error?.message });
+        logger.error(`[fetchWebsiteData] ${url} Microlink API 调用异常:`, error);
+        microlinkData = {};
       }
       
       logger.log(`[fetchWebsiteData] ${url} Microlink 失败，尝试方案二 (Xxapi)`);
     } else {
       logger.warn(`[fetchWebsiteData] ${url} Microlink 处于熔断冷却期，跳过直接尝试 Xxapi`);
+      apiResults.push({ api: 'Microlink', success: false, hasData: false, error: '熔断冷却期' });
     }
     
     // 国外网站跳过 Ahfi API（可能不支持国外网站）
@@ -826,43 +888,76 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData> {
   
   // 方案三：前两个 API 都失败，尝试 xxapi API
   // 使用 v2.xxapi.cn/api/tdk 格式
-  const xxapiData = await fetchDataFromXxapi(url);
-  
-  // 如果 xxapi 有数据，使用 xxapi 的数据
-  if (xxapiData.title || xxapiData.description) {
-    logger.log(`[fetchWebsiteData] ${url} 使用 Xxapi 数据`);
-    // 写入缓存
-    setCachedWebsiteData(url, xxapiData);
-    return xxapiData;
+  let xxapiData: WebsiteData;
+  try {
+    xxapiData = await fetchDataFromXxapi(url);
+    const hasData = !!(xxapiData.title || xxapiData.description);
+    apiResults.push({ api: 'Xxapi', success: true, hasData });
+    
+    // 如果 xxapi 有数据，使用 xxapi 的数据
+    if (hasData) {
+      logger.log(`[fetchWebsiteData] ${url} 使用 Xxapi 数据`);
+      // 写入缓存
+      setCachedWebsiteData(url, xxapiData);
+      return xxapiData;
+    }
+  } catch (error: any) {
+    apiResults.push({ api: 'Xxapi', success: false, hasData: false, error: error?.message });
+    logger.error(`[fetchWebsiteData] ${url} Xxapi API 调用异常:`, error);
+    xxapiData = {};
   }
   
   logger.log(`[fetchWebsiteData] ${url} Xxapi 失败，尝试方案四 (Jxcxin)`);
   
   // 方案四：前三个 API 都失败，尝试 jxcxin API
-  const jxcxinData = await fetchDataFromJxcxin(url);
-  
-  // 如果 jxcxin 有数据，使用 jxcxin 的数据
-  if (jxcxinData.title || jxcxinData.description) {
-    logger.log(`[fetchWebsiteData] ${url} 使用 Jxcxin 数据`);
-    // 写入缓存
-    setCachedWebsiteData(url, jxcxinData);
-    return jxcxinData;
+  let jxcxinData: WebsiteData;
+  try {
+    jxcxinData = await fetchDataFromJxcxin(url);
+    const hasData = !!(jxcxinData.title || jxcxinData.description);
+    apiResults.push({ api: 'Jxcxin', success: true, hasData });
+    
+    // 如果 jxcxin 有数据，使用 jxcxin 的数据
+    if (hasData) {
+      logger.log(`[fetchWebsiteData] ${url} 使用 Jxcxin 数据`);
+      // 写入缓存
+      setCachedWebsiteData(url, jxcxinData);
+      return jxcxinData;
+    }
+  } catch (error: any) {
+    apiResults.push({ api: 'Jxcxin', success: false, hasData: false, error: error?.message });
+    logger.error(`[fetchWebsiteData] ${url} Jxcxin API 调用异常:`, error);
+    jxcxinData = {};
   }
-  
-
   
   logger.log(`[fetchWebsiteData] ${url} Jxcxin 失败，尝试方案五 (Uapis)`);
   
   // 方案五：所有其他 API 都失败后，尝试 Uapis API（作为最后的备选方案）
-  const uapisData = await fetchDataFromUapis(url);
-  
-  // 如果 Uapis 有数据，使用 Uapis 的数据
-  if (uapisData.title || uapisData.description) {
-    logger.log(`[fetchWebsiteData] ${url} 使用 Uapis 数据`);
-    // 写入缓存
-    setCachedWebsiteData(url, uapisData);
-    return uapisData;
+  let uapisData: WebsiteData;
+  try {
+    uapisData = await fetchDataFromUapis(url);
+    const hasData = !!(uapisData.title || uapisData.description);
+    apiResults.push({ api: 'Uapis', success: true, hasData });
+    
+    // 如果 Uapis 有数据，使用 Uapis 的数据
+    if (hasData) {
+      logger.log(`[fetchWebsiteData] ${url} 使用 Uapis 数据`);
+      // 写入缓存
+      setCachedWebsiteData(url, uapisData);
+      return uapisData;
+    }
+  } catch (error: any) {
+    apiResults.push({ api: 'Uapis', success: false, hasData: false, error: error?.message });
+    logger.error(`[fetchWebsiteData] ${url} Uapis API 调用异常:`, error);
+    uapisData = {};
   }
+  
+  // 所有 API 都失败，记录详细的调试信息
+  logger.error(`[fetchWebsiteData] ${url} 所有 API 都失败，API 调用结果:`, apiResults);
+  console.error(`[fetchWebsiteData] ${url} 所有 API 调用失败详情:`, {
+    url,
+    isChinese,
+    apiResults,
+  });
   
   logger.log(`[fetchWebsiteData] ${url} Uapis 失败，生成默认描述`);
   
@@ -912,16 +1007,33 @@ export function SiteCard({ site }: SiteCardProps) {
     // 使用 API 自动获取 title 和 description（优先 microlink.io，失败时回退到 api.ahfi.cn）
     fetchWebsiteData(site.url)
       .then((data) => {
+        logger.log(`[SiteCard] ${site.url} 获取数据成功:`, {
+          hasTitle: !!data.title,
+          hasDescription: !!data.description,
+          shouldFetchName,
+          shouldFetchDescription,
+        });
+        
         if (data.title && shouldFetchName) {
           setName(data.title);
         }
         // 只有 description 是 undefined 时才自动获取，空字符串不获取
         if (data.description && shouldFetchDescription) {
           setDescription(data.description);
+        } else if (shouldFetchDescription && !data.description) {
+          // 如果应该获取但没有获取到，记录警告
+          logger.warn(`[SiteCard] ${site.url} 未能获取到 description，所有 API 都失败了`);
         }
         setIsLoading(false);
       })
-      .catch(() => {
+      .catch((error) => {
+        // 记录错误信息，方便排查生产环境问题
+        logger.error(`[SiteCard] ${site.url} 获取数据失败:`, error);
+        console.error(`[SiteCard] 错误详情 - URL: ${site.url}`, {
+          error: error?.message || String(error),
+          stack: error?.stack,
+          name: error?.name,
+        });
         setIsLoading(false);
       });
   }, [site.url, site.name, site.description]);
