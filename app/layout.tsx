@@ -31,14 +31,14 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${quicksand.variable} dark`}>
+    <html lang="en" suppressHydrationWarning className={quicksand.variable}>
       <body className="flex flex-col min-h-screen antialiased">
         <RootProvider
           search={{
             SearchDialog,
           }}
           theme={{
-            defaultTheme: 'dark', // 设置默认主题为暗色模式
+            defaultTheme: 'light', // 设置默认主题为浅色模式
             enableSystem: false,  // 禁用系统主题检测，始终使用默认主题
             attribute: 'class',   // 使用 class 属性而不是 data-theme
             storageKey: 'theme',  // 存储键名

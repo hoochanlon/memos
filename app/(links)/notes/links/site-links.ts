@@ -94,10 +94,12 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: 'gh-proxy',
         url: 'https://gh-proxy.com',
+        icon: '/icons/github.svg',
       }),
       createSite({
         name: 'ghproxy.link',
         url: 'https://ghproxy.link',
+        icon: '/icons/github.svg',
       }),
     ],
   },
@@ -181,19 +183,23 @@ export const siteLinks: SiteCategory[] = [
     category: '图像处理',
     sites: [
       createSite({
+        name: '动漫图片超分辨率',
         url: 'https://real-cugan.animesales.xyz/',
       }),
       createSite({
-        name: 'bigjpg',
+        name: 'Bigjpg',
         url: 'https://Bigjpg.com/',
       }),
       createSite({
+        name: '圆形裁剪图片',
         url: 'https://circlecropimage.com/zh-cn/',
       }),
       createSite({
+        name: 'AI一键去水印',
         url: 'https://ezremove.ai/zh/text-remover/',
       }),
       createSite({
+        name: '图片压缩',
         url: 'https://squoosh.app',
       }),
       createSite({
@@ -201,6 +207,7 @@ export const siteLinks: SiteCategory[] = [
         url: 'https://ai-cartoon-figure.club/',
       }),
       createSite({
+        name: '图片大小调整',
         url: 'https://tool.xuecan.net/image-resize/',
       }),
       createSite({
@@ -245,10 +252,12 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: 'wallpaperalchemy',
         url: 'https://www.wallpaperalchemy.com/zh-CN',
+        description: '探索一系列高质量的桌面和移动设备壁纸。从自然风景和抽象艺术到未来设计，找到完美的背景来提升您的屏幕。',
       }),
       createSite({
         name: 'dynamicwallpaper',
         url: 'https://www.dynamicwallpaper.club',
+        description: 'Create and share Dynamic Wallpapers for macOS.',
       }),
       createSite({
         name: 'wallpaperhub',
@@ -292,6 +301,7 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: 'spotify',
         url: 'https://open.spotify.com/',
+        description: '音乐流媒体服务',
       }),
       createSite({
         name: 'lxmusic',
@@ -307,7 +317,9 @@ export const siteLinks: SiteCategory[] = [
     category: '特别攻略组',
     sites: [
       createSite({
+        name: 'OCG大师规则',
         url: 'https://ocg-rulebook.readthedocs.io/zh-cn/latest/chapters/c02_master_rule.html',
+        description: '游戏王OCG完全规则书2020的中文翻译。',
       }),
       createSite({
         name: '女神转生WIKI',
