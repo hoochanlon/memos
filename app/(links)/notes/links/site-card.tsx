@@ -417,7 +417,20 @@ async function fetchDataFromMicrolink(url: string): Promise<WebsiteData> {
       return {};
     }
     
-    const data = await response.json();
+    // 检查响应内容类型
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      logger.warn(`[Microlink] ${url} 返回非 JSON 响应: ${contentType}`);
+      return {};
+    }
+    
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      logger.error(`[Microlink] ${url} JSON 解析失败:`, jsonError);
+      return {};
+    }
     
     // 检查是否是速率限制错误（即使 HTTP 状态码是 200，响应体也可能包含错误）
     if (data.status === 'fail' && (data.code === 'ERATE' || data.code === 'ERATELIMIT')) {
@@ -481,7 +494,20 @@ async function fetchDataFromAhfi(url: string): Promise<WebsiteData> {
       return {};
     }
     
-    const data = await response.json();
+    // 检查响应内容类型
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      logger.warn(`[Ahfi] ${url} 返回非 JSON 响应: ${contentType}`);
+      return {};
+    }
+    
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      logger.error(`[Ahfi] ${url} JSON 解析失败:`, jsonError);
+      return {};
+    }
     
     if (data.code === 200 && data.data) {
       return {
@@ -532,7 +558,20 @@ async function fetchDataFromXxapi(url: string): Promise<WebsiteData> {
       return {};
     }
     
-    const data = await response.json();
+    // 检查响应内容类型
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      logger.warn(`[Xxapi] ${url} 返回非 JSON 响应: ${contentType}`);
+      return {};
+    }
+    
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      logger.error(`[Xxapi] ${url} JSON 解析失败:`, jsonError);
+      return {};
+    }
     
     if (data.code === 200 && data.data) {
       return {
@@ -582,7 +621,20 @@ async function fetchDataFromJxcxin(url: string): Promise<WebsiteData> {
       return {};
     }
     
-    const data = await response.json();
+    // 检查响应内容类型
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      logger.warn(`[Jxcxin] ${url} 返回非 JSON 响应: ${contentType}`);
+      return {};
+    }
+    
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      logger.error(`[Jxcxin] ${url} JSON 解析失败:`, jsonError);
+      return {};
+    }
     
     if (data.code === 200 && data.data) {
       return {
@@ -632,12 +684,43 @@ async function fetchDataFromUapis(url: string): Promise<WebsiteData> {
       return {};
     }
     
-    const data = await response.json();
+    // 检查响应内容类型
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      logger.warn(`[Uapis] ${url} 返回非 JSON 响应: ${contentType}`);
+      return {};
+    }
     
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      logger.error(`[Uapis] ${url} JSON 解析失败:`, jsonError);
+      return {};
+    }
+    
+    // Uapis API 可能返回不同的响应结构，尝试多种格式
+    // 格式1: 直接返回 {title, description}
+    // 格式2: 包装结构 {code: 200, data: {title, description}}
+    // 格式3: 包装结构 {success: true, data: {title, description}}
     if (data.title || data.description) {
       return {
         title: data.title,
         description: data.description,
+      };
+    }
+    
+    if (data.code === 200 && data.data) {
+      return {
+        title: data.data.title,
+        description: data.data.description,
+      };
+    }
+    
+    if (data.success && data.data) {
+      return {
+        title: data.data.title,
+        description: data.data.description,
       };
     }
     
