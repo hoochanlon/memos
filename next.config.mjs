@@ -8,10 +8,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const withMDX = createMDX();
 
 // 开发默认根路径；生产（或设置了 NEXT_PUBLIC_BASE_PATH）走子路径
-// 生产环境（包括 Vercel 和 GitHub Pages）都使用 /memos
+// Vercel 部署使用根路径，GitHub Pages 使用 /memos
 const basePath =
   process.env.NEXT_PUBLIC_BASE_PATH ??
-  (process.env.NODE_ENV === 'production' ? '/memos' : '');
+  (process.env.NODE_ENV === 'production' && !process.env.VERCEL ? '/memos' : '');
 
 /** @type {import('next').NextConfig} */
 const config = {
