@@ -131,6 +131,47 @@ function getCacheKey(url: string): string {
 }
 
 /**
+ * 验证网站数据是否有效
+ * 排除明显错误的数据（如 Vercel Security Checkpoint、空数据等）
+ */
+function isValidWebsiteData(data: WebsiteData, url: string): boolean {
+  // 如果完全没有数据，无效
+  if (!data.title && !data.description) {
+    return false;
+  }
+  
+  // 检查是否是明显的错误页面标题
+  const invalidTitles = [
+    'Vercel Security Checkpoint',
+    'Security Checkpoint',
+    'Just a moment...',
+    'Checking your browser',
+    'Access Denied',
+    '403 Forbidden',
+    '404 Not Found',
+    'Error',
+  ];
+  
+  if (data.title) {
+    const titleLower = data.title.toLowerCase();
+    // 如果标题是无效标题，且没有有效的 description，则认为是无效数据
+    if (invalidTitles.some(invalid => titleLower.includes(invalid.toLowerCase()))) {
+      // 如果有有效的 description，仍然可以使用
+      if (data.description && data.description.trim().length > 10) {
+        return true;
+      }
+      console.warn(`[Cache] 检测到无效标题 "${data.title}"，但保留因为有有效描述`);
+      return false;
+    }
+  }
+  
+  // 如果只有 title 没有 description，仍然有效
+  // 如果只有 description 没有 title，也有效
+  // 如果两者都有，更有效
+  return true;
+}
+
+/**
  * 从缓存中读取网站数据
  */
 function getCachedWebsiteData(url: string): WebsiteData | null {
@@ -152,12 +193,22 @@ function getCachedWebsiteData(url: string): WebsiteData | null {
       return null;
     }
     
-    // 返回有效数据（排除 timestamp 和 expiresIn）
-    return {
+    // 提取数据
+    const websiteData: WebsiteData = {
       title: data.title,
       description: data.description,
       ico: data.ico,
     };
+    
+    // 验证数据有效性
+    if (!isValidWebsiteData(websiteData, url)) {
+      console.warn(`[Cache] ${url} 缓存数据无效，清除缓存:`, websiteData);
+      localStorage.removeItem(cacheKey);
+      return null;
+    }
+    
+    // 返回有效数据
+    return websiteData;
   } catch (error) {
     logger.error(`[Cache] 读取缓存失败 (${url}):`, error);
     return null;
@@ -170,6 +221,12 @@ function getCachedWebsiteData(url: string): WebsiteData | null {
 function setCachedWebsiteData(url: string, data: WebsiteData, expiresIn: number = DEFAULT_CACHE_EXPIRES): void {
   if (typeof window === 'undefined') return;
   
+  // 验证数据有效性，无效数据不缓存
+  if (!isValidWebsiteData(data, url)) {
+    console.warn(`[Cache] ${url} 数据无效，不写入缓存:`, data);
+    return;
+  }
+  
   try {
     const cacheKey = getCacheKey(url);
     const cached: CachedWebsiteData = {
@@ -179,6 +236,7 @@ function setCachedWebsiteData(url: string, data: WebsiteData, expiresIn: number 
     };
     
     localStorage.setItem(cacheKey, JSON.stringify(cached));
+    console.log(`[Cache] ${url} 数据已缓存:`, { title: data.title, hasDescription: !!data.description });
   } catch (error) {
     logger.error(`[Cache] 写入缓存失败 (${url}):`, error);
     // localStorage 可能已满，尝试清理旧缓存
@@ -783,6 +841,25 @@ if (typeof window !== 'undefined') {
   (window as any).__getSiteCardDebugInfo = (url: string) => {
     return debugApiCalls.get(url) || [];
   };
+  // 添加清除缓存的工具函数
+  (window as any).__clearSiteCardCache = (url?: string) => {
+    if (url) {
+      const cacheKey = getCacheKey(url);
+      localStorage.removeItem(cacheKey);
+      console.log(`已清除 ${url} 的缓存`);
+    } else {
+      // 清除所有缓存
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(CACHE_PREFIX)) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      console.log(`已清除 ${keysToRemove.length} 个缓存项`);
+    }
+  };
 }
 
 async function fetchWebsiteData(url: string): Promise<WebsiteData> {
@@ -803,10 +880,25 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData> {
   
   // 先检查缓存
   const cached = getCachedWebsiteData(url);
-  if (cached && (cached.title || cached.description)) {
-    console.log(`[fetchWebsiteData] ${url} 使用缓存数据`, cached);
-    logger.log(`[fetchWebsiteData] ${url} 使用缓存数据`);
-    return cached;
+  if (cached) {
+    // 验证缓存数据是否真正有效（有 title 或有效的 description）
+    const hasValidTitle = cached.title && cached.title.trim().length > 0;
+    const hasValidDescription = cached.description && cached.description.trim().length > 0;
+    
+    if (hasValidTitle || hasValidDescription) {
+      console.log(`[fetchWebsiteData] ${url} 使用有效缓存数据`, cached);
+      logger.log(`[fetchWebsiteData] ${url} 使用缓存数据`);
+      return cached;
+    } else {
+      // 缓存数据无效，清除并继续获取
+      console.warn(`[fetchWebsiteData] ${url} 缓存数据无效，清除缓存并重新获取`);
+      const cacheKey = getCacheKey(url);
+      try {
+        localStorage.removeItem(cacheKey);
+      } catch (e) {
+        // 忽略清除错误
+      }
+    }
   }
   
   // 缓存未命中或已过期，从 API 获取
