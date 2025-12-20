@@ -49,10 +49,19 @@ const config = {
     workerThreads: false,
     // 禁用不必要的优化
     optimizeCss: false,
+    // 禁用服务器组件（静态导出不需要）
+    serverComponentsExternalPackages: [],
   },
+  // 生产环境优化：禁用 source map 以减少内存使用
+  productionBrowserSourceMaps: false,
+  // 减少构建时的内存使用：限制并发
+  ...(process.env.NODE_ENV === 'production' && {
+    swcMinify: true, // 使用 SWC 压缩（更快，内存占用更少）
+  }),
   // 减少构建时的内存使用
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
+  webpack: (config, { isServer, dev }) => {
+    // 生产构建时优化内存使用
+    if (!isServer && !dev) {
       // 客户端构建优化
       config.optimization = {
         ...config.optimization,
@@ -65,6 +74,12 @@ const config = {
           },
         },
       };
+      // 减少内存使用：简化优化配置
+      config.optimization.usedExports = false;
+    }
+    // 减少内存使用：禁用 source map（生产环境）
+    if (!dev) {
+      config.devtool = false;
     }
     return config;
   },
