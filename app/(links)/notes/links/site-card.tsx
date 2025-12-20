@@ -58,9 +58,29 @@ const CACHE_PREFIX = 'website_data_';
 const DEFAULT_CACHE_EXPIRES = 7 * 24 * 60 * 60 * 1000; // 7 天
 
 /**
- * API 请求超时时间：3 秒
+ * API 请求超时时间：8 秒
  */
-const API_TIMEOUT = 3000; // 3 秒
+const API_TIMEOUT = 8000; // 8秒，增加超时时间以提高生产环境的成功率
+
+// 检测是否为国内网站域名
+function isChineseWebsite(url: string): boolean {
+  try {
+    const domain = new URL(url).hostname;
+    // 国内顶级域名和二级域名
+    const chineseDomains = [
+      '.cn', '.com.cn', '.net.cn', '.org.cn', '.gov.cn', '.edu.cn',
+      '.hk', '.mo', '.tw', // 港澳台
+      // 国内常见网站域名
+      'bilibili.com', 'zhihu.com', 'weibo.com', 'baidu.com', 'taobao.com',
+      'jd.com', 'douyin.com', 'toutiao.com', 'kuaishou.com'
+    ];
+    
+    return chineseDomains.some(domainPart => domain.endsWith(domainPart));
+  } catch (error) {
+    logger.error(`[isChineseWebsite] 解析 URL ${url} 失败:`, error);
+    return false;
+  }
+}
 
 /**
  * Microlink 熔断时间：10 分钟
@@ -587,7 +607,59 @@ async function fetchDataFromJxcxin(url: string): Promise<WebsiteData> {
 }
 
 /**
- * 获取网站信息（优先使用缓存，失败时依次尝试 microlink.io、api.ahfi.cn、v2.xxapi.cn 和 apis.jxcxin.cn）
+ * 方案五：使用 uapis.cn API 获取网站的 title 和 description
+ * API 地址: https://uapis.cn/api/v1/webparse/metadata
+ */
+async function fetchDataFromUapis(url: string): Promise<WebsiteData> {
+  try {
+    const apiUrl = `https://uapis.cn/api/v1/webparse/metadata?url=${encodeURIComponent(url)}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
+    
+    const response = await fetch(apiUrl, {
+      signal: controller.signal,
+    });
+    
+    clearTimeout(timeoutId);
+    
+    // 检查 HTTP 状态码
+    if (!response.ok) {
+      if (response.status === 429) {
+        logger.warn(`[Uapis] ${url} 返回 429 速率限制错误`);
+      } else {
+        logger.warn(`[Uapis] ${url} 返回错误状态码: ${response.status}`);
+      }
+      return {};
+    }
+    
+    const data = await response.json();
+    
+    if (data.title || data.description) {
+      return {
+        title: data.title,
+        description: data.description,
+      };
+    }
+    
+    return {};
+  } catch (error: any) {
+    const errorMessage = error?.message || String(error);
+    if (errorMessage.includes('ERR_BLOCKED_BY_CLIENT') || 
+        errorMessage.includes('Failed to fetch') ||
+        errorMessage.includes('network') ||
+        error.name === 'AbortError') {
+      logger.warn(`[Uapis] ${url} 请求被拦截或网络错误:`, errorMessage);
+    } else {
+      logger.error(`[Uapis] 获取 ${url} 的数据失败:`, error);
+    }
+    return {};
+  }
+}
+
+/**
+ * 获取网站信息（优先使用缓存）
+ * 国内网站：依次尝试 api.ahfi.cn → microlink.io → v2.xxapi.cn → apis.jxcxin.cn → uapis.cn
+ * 国外网站：依次尝试 microlink.io → v2.xxapi.cn → apis.jxcxin.cn → uapis.cn
  */
 async function fetchWebsiteData(url: string): Promise<WebsiteData> {
   // 构建时直接返回空对象
@@ -608,37 +680,69 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData> {
   // 缓存未命中或已过期，从 API 获取
   logger.log(`[fetchWebsiteData] ${url} 缓存未命中，从 API 获取`);
   
-  // 方案一：先尝试 microlink.io（使用队列确保同一时间只有一个请求）
-  if (isMicrolinkAvailable()) {
-    const microlinkData = await queueMicrolinkRequest(() => fetchDataFromMicrolink(url));
+  const isChinese = isChineseWebsite(url);
+  
+  // 根据域名类型选择不同的 API 调用顺序
+  if (isChinese) {
+    logger.log(`[fetchWebsiteData] ${url} 是国内网站，优先使用 Ahfi API`);
     
-    // 如果 microlink 返回了 title 或 description，直接使用
-    if (microlinkData.title || microlinkData.description) {
-      logger.log(`[fetchWebsiteData] ${url} 使用 Microlink 数据`);
+    // 方案一：国内网站优先使用 Ahfi API
+    const ahfiData = await fetchDataFromAhfi(url);
+    
+    // 如果 ahfi 有数据，使用 ahfi 的数据
+    if (ahfiData.title || ahfiData.description) {
+      logger.log(`[fetchWebsiteData] ${url} 使用 Ahfi 数据`);
       // 写入缓存
-      setCachedWebsiteData(url, microlinkData);
-      return microlinkData;
+      setCachedWebsiteData(url, ahfiData);
+      return ahfiData;
     }
     
-    logger.log(`[fetchWebsiteData] ${url} Microlink 失败，尝试方案二 (Ahfi)`);
+    logger.log(`[fetchWebsiteData] ${url} Ahfi 失败，尝试 Microlink`);
+    
+    // 方案二：Ahfi 失败后尝试 Microlink
+    if (isMicrolinkAvailable()) {
+      const microlinkData = await queueMicrolinkRequest(() => fetchDataFromMicrolink(url));
+      
+      // 如果 microlink 返回了 title 或 description，直接使用
+      if (microlinkData.title || microlinkData.description) {
+        logger.log(`[fetchWebsiteData] ${url} 使用 Microlink 数据`);
+        // 写入缓存
+        setCachedWebsiteData(url, microlinkData);
+        return microlinkData;
+      }
+      
+      logger.log(`[fetchWebsiteData] ${url} Microlink 失败，尝试方案三 (Xxapi)`);
+    } else {
+      logger.warn(`[fetchWebsiteData] ${url} Microlink 处于熔断冷却期，跳过直接尝试 Xxapi`);
+    }
   } else {
-    logger.warn(`[fetchWebsiteData] ${url} Microlink 处于熔断冷却期，跳过直接尝试 Ahfi`);
+    logger.log(`[fetchWebsiteData] ${url} 是国外网站，优先使用 Microlink API`);
+    
+    // 方案一：国外网站优先使用 microlink.io（使用队列确保同一时间只有一个请求）
+    if (isMicrolinkAvailable()) {
+      const microlinkData = await queueMicrolinkRequest(() => fetchDataFromMicrolink(url));
+      
+      // 如果 microlink 返回了 title 或 description，直接使用
+      if (microlinkData.title || microlinkData.description) {
+        logger.log(`[fetchWebsiteData] ${url} 使用 Microlink 数据`);
+        // 写入缓存
+        setCachedWebsiteData(url, microlinkData);
+        return microlinkData;
+      }
+      
+      logger.log(`[fetchWebsiteData] ${url} Microlink 失败，尝试方案二 (Xxapi)`);
+    } else {
+      logger.warn(`[fetchWebsiteData] ${url} Microlink 处于熔断冷却期，跳过直接尝试 Xxapi`);
+    }
+    
+    // 国外网站跳过 Ahfi API（可能不支持国外网站）
+    logger.log(`[fetchWebsiteData] ${url} 是国外网站，跳过 Ahfi API`);
   }
   
-  // 方案二：microlink 失败或没有数据，尝试 ahfi API
-  const ahfiData = await fetchDataFromAhfi(url);
-  
-  // 如果 ahfi 有数据，使用 ahfi 的数据
-  if (ahfiData.title || ahfiData.description) {
-    logger.log(`[fetchWebsiteData] ${url} 使用 Ahfi 数据`);
-    // 写入缓存
-    setCachedWebsiteData(url, ahfiData);
-    return ahfiData;
-  }
-  
-  logger.log(`[fetchWebsiteData] ${url} Ahfi 失败，尝试方案三 (Xxapi)`);
+  logger.log(`[fetchWebsiteData] ${url} 尝试方案三 (Xxapi)`);
   
   // 方案三：前两个 API 都失败，尝试 xxapi API
+  // 使用 v2.xxapi.cn/api/tdk 格式
   const xxapiData = await fetchDataFromXxapi(url);
   
   // 如果 xxapi 有数据，使用 xxapi 的数据
@@ -662,7 +766,22 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData> {
     return jxcxinData;
   }
   
-  logger.log(`[fetchWebsiteData] ${url} 所有方案都失败，生成默认描述`);
+
+  
+  logger.log(`[fetchWebsiteData] ${url} Jxcxin 失败，尝试方案五 (Uapis)`);
+  
+  // 方案五：所有其他 API 都失败后，尝试 Uapis API（作为最后的备选方案）
+  const uapisData = await fetchDataFromUapis(url);
+  
+  // 如果 Uapis 有数据，使用 Uapis 的数据
+  if (uapisData.title || uapisData.description) {
+    logger.log(`[fetchWebsiteData] ${url} 使用 Uapis 数据`);
+    // 写入缓存
+    setCachedWebsiteData(url, uapisData);
+    return uapisData;
+  }
+  
+  logger.log(`[fetchWebsiteData] ${url} Uapis 失败，生成默认描述`);
   
   // 四个 API 都失败，生成默认描述
   const defaultDescription = `访问 ${extractDomain(url)} 网站`;
@@ -766,7 +885,7 @@ export function SiteCard({ site }: SiteCardProps) {
               }
               // 最后的保险：如果没有描述，显示一个友好的默认占位符
               return (
-                <p className="text-sm text-fd-muted-foreground line-clamp-2 italic">
+                <p className="text-sm text-fd-muted-foreground line-clamp-2">
                   访问 {extractDomain(site.url)} 网站
                 </p>
               );
