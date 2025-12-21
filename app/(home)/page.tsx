@@ -5,8 +5,40 @@ import { ArrowRight, ExternalLink, Github, Book, Code, Brain, Clock, Star,FileTe
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { SiteFooter } from '@/components/site-footer';
+import { useEffect } from 'react';
 
 export default function HomePage() {
+  // 预加载 welcome.png 图片，确保点击"浏览内容"后立即显示
+  useEffect(() => {
+    // 获取 basePath（与 BasePathImage 组件逻辑一致）
+    const getBasePath = (): string => {
+      if (typeof window === 'undefined') return '';
+      const pathname = window.location.pathname;
+      if (pathname.startsWith('/memos/') || pathname === '/memos') {
+        return '/memos';
+      }
+      const envBasePath = process.env.NEXT_PUBLIC_BASE_PATH;
+      if (envBasePath) {
+        return envBasePath;
+      }
+      return '';
+    };
+
+    const basePath = getBasePath();
+    const imageSrc = `${basePath}/imgs/welcome.png`;
+    
+    // 预加载图片
+    const img = new window.Image();
+    img.src = imageSrc;
+    
+    // 也可以使用 link prefetch（更现代的方法）
+    const link = document.createElement('link');
+    link.rel = 'prefetch';
+    link.as = 'image';
+    link.href = imageSrc;
+    document.head.appendChild(link);
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* 英雄区域 pt 移动端高度，md:pt 桌面端高度，pb 移动端底部间距，md:pb 桌面端底部间距 */}
@@ -62,6 +94,7 @@ export default function HomePage() {
               href="/notes/essay"
               className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-foreground border border-border rounded-lg hover:opacity-90 transition-all duration-300 transform hover:scale-105"
               style={{ fontFamily: "'Resource Han Rounded CN', sans-serif", fontSize: '20px', fontWeight: 700, letterSpacing: '0.03em', color: 'rgb(156, 163, 175)' }}
+              prefetch={true}
             >
               浏览内容
               <ArrowRight className="w-5 h-5" />
@@ -79,6 +112,21 @@ export default function HomePage() {
           </div>
         </motion.div>
       </section>
+
+      {/* 预加载 welcome.png 图片，确保点击"浏览内容"后立即显示 */}
+      <div className="hidden">
+        <Image
+          src="/imgs/welcome.png"
+          alt=""
+          width={1200}
+          height={800}
+          priority={false}
+          fetchPriority="low"
+          loading="lazy"
+          style={{ display: 'none' }}
+          aria-hidden="true"
+        />
+      </div>
 
       {/* <SiteFooter /> */}
     </div>
