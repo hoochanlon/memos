@@ -20,8 +20,8 @@
   background-position: 0 0, 0 0;
 }
 
-/* 为 body 或主容器添加网格背景 */
-body {
+/* 为 body、code 或主容器添加网格背景 */
+body,code {
   background-image: 
     linear-gradient(var(--grid-color) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
@@ -73,6 +73,11 @@ header[id*="nav"] .backdrop-blur-lg:not(.shiki):not(figure):not(pre):not(code)::
 /* 夜间模式下隐藏网格背景 */
 .dark body,
 .dark .grid-background,
+.dark code,
+.dark pre,
+.dark .shiki,
+.dark .shiki pre,
+.dark .shiki code,
 .dark header[aria-label="Main"]::before,
 .dark header.sticky::before,
 .dark header[id*="nav"]::before,

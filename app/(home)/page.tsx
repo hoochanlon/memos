@@ -9,8 +9,8 @@ import { SiteFooter } from '@/components/site-footer';
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      {/* 英雄区域 */}
-      <section className="flex flex-col items-center justify-center pt-8 pb-10 md:pt-12 md:pb-12 px-4 text-center flex-1">
+      {/* 英雄区域 pt 移动端高度，md:pt 桌面端高度，pb 移动端底部间距，md:pb 桌面端底部间距 */}
+      <section className="flex flex-col items-center justify-start pt-30 pb-10 md:pt-50 md:pb-12 px-4 text-center flex-1">
         {/* 头像图片 */}
         <motion.div 
           className="flex justify-center mb-8"
@@ -51,7 +51,7 @@ export default function HomePage() {
               href="https://hoochanlon.moe/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-foreground rounded-lg hover:opacity-90 transition-all duration-300 transform hover:scale-105"
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-foreground border border-border rounded-lg hover:opacity-90 transition-all duration-300 transform hover:scale-105"
               style={{ fontFamily: "'Resource Han Rounded CN', sans-serif", fontSize: '20px', fontWeight: 700, letterSpacing: '0.03em', color: 'rgb(156, 163, 175)' }}
               >
               <ExternalLink className="w-5 h-5" />
@@ -60,7 +60,7 @@ export default function HomePage() {
             
             <Link
               href="/notes/essay"
-              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-foreground rounded-lg hover:opacity-90 transition-all duration-300 transform hover:scale-105"
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-foreground border border-border rounded-lg hover:opacity-90 transition-all duration-300 transform hover:scale-105"
               style={{ fontFamily: "'Resource Han Rounded CN', sans-serif", fontSize: '20px', fontWeight: 700, letterSpacing: '0.03em', color: 'rgb(156, 163, 175)' }}
             >
               浏览内容
@@ -80,7 +80,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      <SiteFooter />
+      {/* <SiteFooter /> */}
     </div>
   );
 }

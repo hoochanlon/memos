@@ -1,7 +1,6 @@
 import { source } from '@/lib/source';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { SiteFooter } from '@/components/site-footer';
 import { BackToTop } from '@/components/back-to-top';
 import { FileText, Archive, Tag as TagIcon, Globe } from 'lucide-react';
 
@@ -99,7 +98,6 @@ export default async function TagsPage() {
           )}
         </section>
       </main>
-      <SiteFooter />
       <BackToTop />
     </div>
   );

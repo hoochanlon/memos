@@ -80,7 +80,7 @@ export default async function Page(props: PageProps<'/notes/[...slug]'>) {
               <Link
                 key={index}
                 href={`/notes/tags/${encodeURIComponent(tagName)}/`}
-                className="inline-flex items-center px-2 py-1 rounded-md bg-fd-muted text-[15px] leading-6 text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-accent-foreground transition-colors no-underline"
+                className="inline-flex items-center text-[15px] leading-6 text-fd-primary hover:text-fd-primary/80 transition-colors no-underline"
               >
                 # {tagName}
               </Link>

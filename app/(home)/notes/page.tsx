@@ -1,7 +1,6 @@
 import { source } from '@/lib/source';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { SiteFooter } from '@/components/site-footer';
 import { BackToTop } from '@/components/back-to-top';
 import { CalendarDays, Tag as TagIcon, FileText, Globe, List } from 'lucide-react';
 
@@ -177,7 +176,6 @@ export default function NotesArchivePage() {
           })}
         </div>
       </main>
-      <SiteFooter />
       <BackToTop />
     </div>
   );

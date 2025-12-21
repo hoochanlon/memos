@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { SiteFooter } from '@/components/site-footer';
 import { BackToTop } from '@/components/back-to-top';
 import { FileText, Archive, Tag as TagIcon, List } from 'lucide-react';
 import { SiteCard } from './site-card';
@@ -126,7 +125,6 @@ export default function LinksPage() {
           })}
         </div>
       </main>
-      <SiteFooter />
       <BackToTop />
     </div>
   );
