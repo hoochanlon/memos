@@ -6,6 +6,9 @@
   /* 导航栏上的网格颜色（稍微明显一些） */
   --grid-color-nav: rgba(0, 0, 0, 0.05);
   --grid-color-nav-dark: rgba(255, 255, 255, 0.05);
+  /* 卡片和按钮上的网格颜色 */
+  --grid-color-card: rgba(0, 0, 0, 0.04);
+  --grid-color-card-dark: rgba(255, 255, 255, 0.04);
 }
 
 /* 网格背景的通用样式 */
@@ -48,5 +51,47 @@ header[id*="nav"] .backdrop-blur-lg:not(.shiki):not(figure):not(pre):not(code)::
   background-position: 0 0, 0 0;
   pointer-events: none;
   z-index: 0;
+}
+
+/* 卡片和按钮的透明背景和网格效果 */
+.bg-fd-card,
+[class*="bg-fd-card"] {
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.bg-foreground,
+[class*="bg-foreground"] {
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* 夜间模式下隐藏网格背景 */
+.dark body,
+.dark .grid-background,
+.dark header[aria-label="Main"]::before,
+.dark header.sticky::before,
+.dark header[id*="nav"]::before,
+.dark header#nd-nav::before,
+.dark header#nd-subnav::before,
+.dark header[aria-label="Main"] .backdrop-blur-lg:not(.shiki):not(figure):not(pre):not(code)::before,
+.dark header.sticky .backdrop-blur-lg:not(.shiki):not(figure):not(pre):not(code)::before,
+.dark header[id*="nav"] .backdrop-blur-lg:not(.shiki):not(figure):not(pre):not(code)::before {
+  background-image: none !important;
+}
+
+/* 夜间模式下调整卡片和按钮的背景色 */
+.dark .bg-fd-card,
+.dark [class*="bg-fd-card"] {
+  background-color: rgba(17, 24, 39, 0.6) !important;
+}
+
+.dark .bg-foreground,
+.dark [class*="bg-foreground"] {
+  background-color: rgba(31, 41, 55, 0.7) !important;
 }
 
