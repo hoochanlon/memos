@@ -23,13 +23,12 @@ export const siteLinks: SiteCategory[] = [
       createSite({
           name: 'DuckDuckGo',
           url: 'https://duckduckgo.com/',
-        //   description: '',
-        // icon 会自动生成为 https://favicon.im/baidu.com
+          description: '隐私保护搜索引擎',
       }),
       createSite({
         name: 'Glarity',
         url: 'https://askai.glarity.app/zh-CN/search',
-        description: 'Glarity 问答，您的知识百科全书。只需提出任何问题，您将在这里找到答案。',
+        description: 'Glarity 问答',
       }),
       createSite({
         name: 'tryallai',
@@ -39,48 +38,56 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: '日计',
         url: 'https://cent.linkai.work/',
-        description: '记账 Github Web 版',
+        description: '记账 Github 版',
       }),
       createSite({
         url: 'https://app.binpay.cc',
-        description: 'BinPay 虚拟海外信用卡开通及支付网站',
+        description: '虚拟海外信用卡开通服务',
       }),
       createSite({
         name: '欧易',
         url: 'https://www.okx.com/zh-hans',
+        description: '比特币等虚拟货币交易所',
       }),
       createSite({
         name: 'ITDog',
         url: 'https://www.itdog.cn/',
+        description: '网络运维工具',
       }),
       createSite({
         name: 'Pinterest',
         url: 'https://www.pinterest.com',
+        description: '图片收藏分享平台',
       }),
       createSite({
         name: 'pixiv',
         url: 'https://www.pixiv.net',
+        description: '日本插画分享平台',
       }),
       createSite({
         name: 'picx',
         url: 'https://picx.xpoet.cn',
-        description: 'PicX 是一款基于 GitHub API 开发的图床工具，提供图片上传托管、生成图片链接和常用图片工具箱服务',
+        description: 'PicX 是一款基于 GitHub API 开发的图床工具',
       }),
       createSite({
         name: 'img.remit.ee',
         url: 'https://img.remit.ee',
+        description: '免费图床，相对自由度较高',
       }),
       createSite({
         name: 'freeimg',
         url: 'https://www.freeimg.cn/',
+        description: '免费图床，国内约束较多',
       }),
       createSite({
         name: 'filext',
         url: 'https://filext.com/zh',
+        description: '预览未知格式文件',
       }),
       createSite({
         name: 'toolify',
         url: 'https://www.toolify.ai/zh',
+        description: 'AI 工具箱',
       }),
     ],
   },
@@ -90,16 +97,19 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: 'supergit',
         url: 'https://csjrb.top/supergit.html',
+        description: 'Github 加速扩展',
       }),
       createSite({
         name: 'gh-proxy',
         url: 'https://gh-proxy.com',
         icon: '/icons/github.svg',
+        description: 'Github 加速代理',
       }),
       createSite({
-        name: 'ghproxy.link',
-        url: 'https://ghproxy.link',
+        name: 'gh.llkk.cc',
+        url: 'https://gh.llkk.cc',
         icon: '/icons/github.svg',
+        description: 'Github 加速代理',
       }),
     ],
   },
@@ -109,14 +119,17 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: 'favicon.im',
         url: 'https://favicon.im/zh',
+        description: '网页图标采集器',
       }),
       createSite({
         name: 'microlink.io',
         url: 'https://microlink.io/',
+        description: '网站信息采集器',
       }),
       createSite({
-        name: 'linkpreview',
-        url: 'https://linkpreview.net/',
+        name: 'sitesnapper.app',
+        url: 'https://sitesnapper.app/zh',
+        description: '完整归档网页内容',
       }),
     ],
   },
@@ -126,26 +139,32 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: 'ooxx.ooo',
         url: 'https://ooxx.ooo',
+        description: 'v2ex 图床',
       }),
       createSite({
         name: 'postimages',
         url: 'https://postimages.org',
+        description: '国外老牌图床',
       }),
       createSite({
         name: 'freeimage.host',
         url: 'https://freeimage.host/',
+        description: '国外老牌图床',
       }),
       createSite({
         name: 'lvse.eu.org',
         url: 'https://lvse.eu.org',
+        description: '绿色图床',
       }),
       createSite({
         name: 'sm.ms',
         url: 'https://sm.ms',
+        description: '老牌付费图床',
       }),
       createSite({
         name: 'imagekit',
         url: 'https://imagekit.io/',
+        description: '存储桶、CDN 服务',
       }),
     ],
   },
@@ -156,26 +175,32 @@ export const siteLinks: SiteCategory[] = [
         name: 'favicon.io',
         url: 'https://favicon.io/',
         icon: '/icons/favicon.io.svg',
+        description: '图片转换图标服务',
       }),
       createSite({
         name: 'uutool.cn',
         url: 'https://uutool.cn/web-icon',
+        description: '网站图标下载工具',
       }),
       createSite({
         name: 'svgconverter',
         url: 'https://svgconverter.com/zh/png-to-svg',
+        description: '常规格式图片转换 SVG',
       }),
       createSite({
         name: 'iconify',
         url: 'https://icon-sets.iconify.design/',
+        description: '类 Font Asesome 图标库',
       }),
       createSite({
         name: 'google icons',
         url: 'https://fonts.google.com/icons',
+        description: 'Google Icons 图标库',
       }),
       createSite({
         name: 'font awesome',
         url: 'https://fontawesome.com',
+        description: 'Font Awesome 图标库',
       }),
     ],
   },
@@ -185,39 +210,42 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: '动漫图片超分辨率',
         url: 'https://real-cugan.animesales.xyz/',
+        description: '提高动漫图片清晰度、分辨率',
       }),
       createSite({
         name: 'Bigjpg',
         url: 'https://Bigjpg.com/',
+        description: '提高图片清晰度、分辨率',
       }),
       createSite({
-        name: '圆形裁剪图片',
+        name: 'circlecropimage',
         url: 'https://circlecropimage.com/zh-cn/',
+        description: '可将矩形图片转换为圆形形状',
       }),
       createSite({
-        name: 'AI一键去水印',
+        name: 'ezremove.ai',
         url: 'https://ezremove.ai/zh/text-remover/',
+        description: 'AI 一键去水印',
       }),
       createSite({
-        name: '图片压缩',
+        name: 'squoosh',
         url: 'https://squoosh.app',
+        description: '单张图片极致压缩',
       }),
       createSite({
-        name: 'AI 卡通图生成',
+        name: 'ai-cartoon-figure',
         url: 'https://ai-cartoon-figure.club/',
-      }),
-      createSite({
-        name: '图片大小调整',
-        url: 'https://tool.xuecan.net/image-resize/',
+        description: 'AI 卡通图生成',
       }),
       createSite({
         name: 'aspose-photo',
         url: 'https://products.aspose.app/words/zh-hant/merger/photo#',
-        description: '在線合併照片。按您需要的順序輕鬆合併兩張或多張照片。',
+        description: '在線合併照片。',
       }),
       createSite({
-        name: '在线图片工具箱',
-        url: 'https://phototool.cn/type/color/',
+        name: 'pixtoolkits',
+        url: 'https://www.pixtoolkits.com/zh',
+        description: '图片编辑工具',
       }),
     ],
   },
@@ -271,27 +299,32 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: 'blicover.magicbox',
         url: 'https://blicover.magicbox.top/',
-        description: 'B站视频封面提取工具',
+        description: 'B站封面提取',
       }),
       createSite({
         name: 'downcats',
         url: 'https://www.downcats.com/zh/bilibili',
+        description: '短视频下载',
       }),
       createSite({
         name: 'imageyoutube',
         url: 'https://imageyoutube.com/thumbnail-download/cn',
+        description: 'YouTube 视频封面提取工具',
       }),
       createSite({
-        name: 'YouTube高清视频下载',
+        name: 'youtube.iiilab',
         url: 'https://youtube.iiilab.com/',
+        description: 'YouTube 高清视频下载',
       }),
       createSite({
         name: 'tubeninja',
         url: 'https://www.tubeninja.net',
+        description: '支持 P、X 站视频下载',
       }),
       createSite({
         name: 'kedou',
         url: 'https://www.kedou.life',
+        description: '泛用型视频解析下载',
       }),
     ],
   },
@@ -306,10 +339,12 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: 'lxmusic',
         url: 'https://www.lxmusic.cc',
+        description: '不止音源，还有其他福利资源',
       }),
       createSite({
         name: 'rainyscope',
         url: 'https://rainyscope.com',
+        description: '白噪音网站',
       }),
     ],
   },
@@ -340,21 +375,8 @@ export const siteLinks: SiteCategory[] = [
         url: 'https://uapis.cn',
       }),
       createSite({
-        name: 'API Store',
-        url: 'https://apis.jxcxin.cn',
-      }),
-      createSite({
         name: '小白 API 接口',
         url: 'https://api.bducds.com',
-      }),
-      createSite({
-        name: 'apilayer',
-        url: 'https://marketplace.apilayer.com/',
-      }),
-      createSite({
-        name: 'public-api-lists',
-        url: 'https://github.com/public-api-lists/public-api-lists',
-        description: '🚀 A hand-curated list of free, open, and developer-friendly APIs',
       }),
     ],
   },
@@ -364,12 +386,12 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: 'myscript',
         url: 'https://webdemo.myscript.com/views/math/index.html#',
-        description: '数学公式识别和输入工具，支持手写、扫描和图片输入。',
+        description: '数学公式识别和输入工具。',
       }),
       createSite({
         name: 'labex',
         url: 'https://labex.io/zh',
-        description: '通过互动实验和真实项目，掌握 Linux、DevOps、网络安全、编程、数据科学等技能。',
+        description: '在线学习和实验真实的项目',
       }),
       createSite({
         name: 'overleaf',
@@ -383,12 +405,12 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: 'Cursor 实践案例',
         url: 'https://cursorpractice.com/zh/cursor-sharing/Still-Drawing-drawio-Manually-zh',
-        description: '学习如何利用Cursor工具快速生成精美的drawio架构图，告别耗时的手绘流程，提升画图效率。包含Mermaid图对比和实战技巧，适合开发者和设计师。',
+        description: '学习如何使用 Cursor',
       }),
       createSite({
         name: 'ioDraw 模版',
         url: 'https://www.iodraw.com/template',
-        description: '支持流程图、思维导图、甘特图、在线白板、在线图表和海报设计',
+        description: '配合“Cursor 实践案例”使用，将搜索到模版喂给 Cursor',
       }),
     ],
   },
