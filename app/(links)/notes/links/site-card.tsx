@@ -44,6 +44,18 @@ export function SiteCard({ site }: SiteCardProps) {
       isClient: typeof window !== 'undefined',
     });
     
+    // 只有当 name 和 description 都未填写时，才调用 API
+    // 如果已经填了 name 和 description，就不调用 API
+    const hasName = site.name !== undefined && site.name.trim() !== '';
+    const hasDescription = site.description !== undefined;
+    
+    // 只有当 name 和 description 都已填写时，才跳过 API 调用
+    if (hasName && hasDescription) {
+      console.log(`[SiteCard] ${site.url} 已填写完整信息（name 和 description），跳过 API 调用`);
+      setIsLoading(false);
+      return;
+    }
+    
     // 计算是否需要获取
     const shouldFetchName = needsAutoFetchName(site.name);
     const shouldFetchDescription = needsAutoFetchDescription(site.description);

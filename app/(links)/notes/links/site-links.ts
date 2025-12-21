@@ -89,6 +89,11 @@ export const siteLinks: SiteCategory[] = [
         url: 'https://www.toolify.ai/zh',
         description: 'AI 工具箱',
       }),
+      createSite({
+        name: 'yours.tools',
+        url: 'https://yours.tools/zh/',
+        description: '在线工具箱',
+      }),
     ],
   },
   {
@@ -246,6 +251,12 @@ export const siteLinks: SiteCategory[] = [
         name: 'pixtoolkits',
         url: 'https://www.pixtoolkits.com/zh',
         description: '图片编辑工具',
+        icon: '/icons/www.svg',
+      }),
+      createSite({
+        name: 'imagetoolkit',
+        url: 'https://imagetoolkit.org/zh',
+        description: '免费好用的 图片工具',
       }),
     ],
   },
@@ -255,41 +266,47 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: '每日必应',
         url: 'https://dailybing.com/',
+        description: '每日必应壁纸',
       }),
       createSite({
         name: 'Peapix',
         url: 'https://peapix.com/',
+        description: 'Peapix、Bing 壁纸',
       }),
       createSite({
         name: '拾光壁纸',
         url: 'https://gallery.timeline.ink/',
+        description: '占用存储空间较大的壁纸',
       }),
       createSite({
         name: 'vsthemes.org',
         url: 'https://vsthemes.org/en/',
-        description: 'Create a unique Windows and desktop design. Download beautiful themes, stylish wallpapers, as well as skins to personalize the interface of the operating system absolutely for free.',
+        description: '小红车主题下载',
       }),
       createSite({
         name: 'best-wallpaper',
         url: 'https://cn.best-wallpaper.net',
+        description: '精品壁纸',
       }),
       createSite({
         name: 'wallpic',
         url: 'https://wallspic.com/cn',
+        description: '电脑、手机、平板通用壁纸',
       }),
       createSite({
         name: 'wallpaperalchemy',
         url: 'https://www.wallpaperalchemy.com/zh-CN',
-        description: '探索一系列高质量的桌面和移动设备壁纸。从自然风景和抽象艺术到未来设计，找到完美的背景来提升您的屏幕。',
+        description: '高质量的桌面和移动设备壁纸。',
       }),
       createSite({
         name: 'dynamicwallpaper',
         url: 'https://www.dynamicwallpaper.club',
-        description: 'Create and share Dynamic Wallpapers for macOS.',
+        description: 'MacOS 动态壁纸',
       }),
       createSite({
         name: 'wallpaperhub',
         url: 'https://www.wallpaperhub.app/',
+        description: 'Windows 壁纸下载',
       }),
     ],
   },
@@ -377,6 +394,27 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: '小白 API 接口',
         url: 'https://api.bducds.com',
+      }),
+    ],
+  },
+  {
+    category: '办公工具',
+    sites: [
+      createSite({
+        name: '打印机驱动',
+        url: 'https://www.dyjqd.com/api/down.html',
+        description: '打印机驱动下载',
+      }),
+      createSite({
+        name: 'pdfgear',
+        url: 'https://www.pdfgear.com',
+        description: '免费的 PDF 编辑软件',
+      }),
+      createSite({
+        name: 'kms.cx',
+        url: 'https://kms.cx',
+        description: 'Windows、Office 激活工具',
+        icon: '/icons/www.svg',
       }),
     ],
   },

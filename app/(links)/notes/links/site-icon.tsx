@@ -28,7 +28,7 @@ export function SiteIcon({ icon, name }: SiteIconProps) {
       <img
         src={iconSrc}
         alt={name}
-        className="w-8 h-8 flex-shrink-0 object-contain rounded"
+        className="site-icon w-8 h-8 flex-shrink-0 object-contain rounded"
         onError={() => setImageError(true)}
       />
     );
