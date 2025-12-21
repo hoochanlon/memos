@@ -1,0 +1,52 @@
+/* 网格背景效果 */
+:root {
+  --grid-size: 20px;
+  --grid-color: rgba(0, 0, 0, 0.03);
+  --grid-color-dark: rgba(255, 255, 255, 0.03);
+  /* 导航栏上的网格颜色（稍微明显一些） */
+  --grid-color-nav: rgba(0, 0, 0, 0.05);
+  --grid-color-nav-dark: rgba(255, 255, 255, 0.05);
+}
+
+/* 网格背景的通用样式 */
+.grid-background {
+  background-image: 
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  background-position: 0 0, 0 0;
+}
+
+/* 为 body 或主容器添加网格背景 */
+body {
+  background-image: 
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  background-position: 0 0, 0 0;
+}
+
+/* 为导航栏及其内部容器添加网格背景 */
+header[aria-label="Main"]::before,
+header.sticky::before,
+header[id*="nav"]::before,
+header#nd-nav::before,
+header#nd-subnav::before,
+header[aria-label="Main"] .backdrop-blur-lg:not(.shiki):not(figure):not(pre):not(code)::before,
+header.sticky .backdrop-blur-lg:not(.shiki):not(figure):not(pre):not(code)::before,
+header[id*="nav"] .backdrop-blur-lg:not(.shiki):not(figure):not(pre):not(code)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(var(--grid-color-nav) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color-nav) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  background-position: 0 0, 0 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
