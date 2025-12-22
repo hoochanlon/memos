@@ -419,6 +419,21 @@ export const siteLinks: SiteCategory[] = [
     ],
   },
   {
+    category: '连接世界',
+    sites: [
+      createSite({
+        name: 'glados.rocks',
+        url: 'https://glados.rocks',
+        description: '便宜支持支付宝的 VPN 代理服务',
+      }),
+      createSite({
+        name: '飞兔云.site',
+        url: 'https://xn--9kq10e0y7h.site',
+        description: 'ChatGPT/Netflix/Disney等解锁！办公娱乐好帮手！',
+      }),
+    ],
+  },
+  {
     category: '教育工具',
     sites: [
       createSite({
