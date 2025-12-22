@@ -5,6 +5,7 @@ import { ArrowRight, ExternalLink, Github, Book, Code, Brain, Clock, Star,FileTe
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { SiteFooter } from '@/components/site-footer';
+import { BasePathImage } from '@/components/mdx/base-path-image';
 import { useEffect } from 'react';
 
 export default function HomePage() {
@@ -51,10 +52,11 @@ export default function HomePage() {
           transition={{ duration: 0.5 }}
         >
           <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-border shadow-xl hover:shadow-2xl transition-shadow duration-300">
-            <Image
+            <BasePathImage
               src="/avatar.png"
               alt="Hoochanlon"
-              fill
+              width={160}
+              height={160}
               className="object-cover"
               priority
               fetchPriority="high"

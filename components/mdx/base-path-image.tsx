@@ -8,6 +8,7 @@ interface BasePathImageProps {
   alt?: string;
   width?: number;
   height?: number;
+  fill?: boolean;
   [key: string]: any;
 }
 
@@ -96,11 +97,13 @@ export function BasePathImage({
   // 服务端渲染时不渲染图片，避免使用错误路径
   // 客户端水合后再渲染，确保使用正确路径
   if (!isClient) {
+    const isFill = rest && typeof rest.fill !== 'undefined' ? Boolean(rest.fill) : false;
+
     return (
       <div 
         style={{ 
-          width: `${width}px`, 
-          height: `${height}px`,
+          width: isFill ? '100%' : `${width}px`, 
+          height: isFill ? '100%' : `${height}px`,
           backgroundColor: 'transparent'
         }} 
         aria-hidden="true"
@@ -108,14 +111,20 @@ export function BasePathImage({
     );
   }
   
-  return (
-    <ImageZoom 
-      {...rest} 
-      src={processedSrc} 
-      width={width} 
-      height={height} 
-    />
-  );
+  const isFill = rest && typeof rest.fill !== 'undefined' ? Boolean(rest.fill) : false;
+
+  const imageProps: Record<string, any> = {
+    ...rest,
+    src: processedSrc,
+  };
+
+  // 如果使用 fill 布局，则不要再传递 width/height，避免与 Next.js 冲突
+  if (!isFill) {
+    imageProps.width = width;
+    imageProps.height = height;
+  }
+
+  return <ImageZoom {...imageProps} />;
 }
 
 
