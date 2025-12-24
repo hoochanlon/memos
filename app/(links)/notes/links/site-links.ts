@@ -420,16 +420,27 @@ export const siteLinks: SiteCategory[] = [
   },
   {
     category: '连接世界',
+    description: 'glados.rocks 是一个便宜支持支付宝的 VPN 代理服务',
     sites: [
       createSite({
         name: 'glados.rocks',
         url: 'https://glados.rocks',
-        description: '便宜支持支付宝的 VPN 代理服务',
+        description: '便宜且支付宝的 VPN，但 IP 不干净',
       }),
       createSite({
         name: '飞兔云.site',
         url: 'https://xn--9kq10e0y7h.site',
         description: 'ChatGPT/Netflix/Disney等解锁！办公娱乐好帮手！',
+      }),
+      createSite({
+        name: 'onesproxy',
+        url: 'https://www.onesproxy.com',
+        description: '海外原生住宅IP,美国住宅IP,欧洲静态IP代理商与海外动态手机IP服务商',
+      }),
+      createSite({
+        name: 'kookeey',
+        url: 'https://www.kookeey.com ',
+        description: '日本IP不支持misskey.ioz注册',
       }),
     ],
   },
