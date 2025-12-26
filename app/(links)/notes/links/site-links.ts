@@ -425,12 +425,18 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: 'glados.rocks',
         url: 'https://glados.rocks',
-        description: '便宜且支付宝的 VPN，但 IP 不干净',
+        description: '便宜支持支付宝，但 IP 不干净',
       }),
       createSite({
         name: '飞兔云.site',
         url: 'https://xn--9kq10e0y7h.site',
-        description: 'ChatGPT/Netflix/Disney等解锁！办公娱乐好帮手！',
+        description: 'ChatGPT/Netflix/Disney',
+      }),
+      createSite({
+        name: 'viewdns.info',
+        url: 'https://https://viewdns.info/chinesefirewall',
+        description: '检查域名是否被 GFW 封锁',
+        icon: '/icons/www.svg',
       }),
       createSite({
         name: 'onesproxy',
@@ -440,7 +446,7 @@ export const siteLinks: SiteCategory[] = [
       createSite({
         name: 'kookeey',
         url: 'https://www.kookeey.com ',
-        description: '日本IP不支持misskey.ioz注册',
+        description: '这家日本IP不支持 misskey.io 注册',
       }),
     ],
   },
