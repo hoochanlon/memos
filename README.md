@@ -40,4 +40,4 @@
    - description内容的前50个字符（如果有）
 
 
-![](https://cdn.jsdelivr.net/gh/hoochanlon/picx-images-hosting@master/uploads/2025/PixPin_2025-12-10_20-39-13.webp)
+![](https://cdn.jsdelivr.net/gh/hoochanlon/picx-images-hosting@master/imgs/uploads/2025/PixPin_2025-12-10_20-39-13.webp)
