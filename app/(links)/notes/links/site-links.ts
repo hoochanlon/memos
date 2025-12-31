@@ -365,6 +365,26 @@ export const siteLinks: SiteCategory[] = [
       }),
     ],
   },
+    {
+    category: '字体',
+    sites: [
+      createSite({
+        name: 'fontspider',
+        url: 'https://www.fontspider.vip',
+        description: '在线字体压缩',
+      }),
+      createSite({
+        name: '在线字体分包',
+        url: 'https://chinese-font.netlify.app/zh-cn/online-split',
+        description: '在线字体分包',
+      }),
+      createSite({
+        name: '字体有线',
+        url: 'https://font.doany.cn',
+        description: '在线字体分包',
+      }),
+    ],
+  },
   {
     category: '特别攻略组',
     sites: [
